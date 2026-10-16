@@ -6,14 +6,15 @@ app = FastAPI()
 
 EMAIL = "24f2006714@ds.study.iitm.ac.in"
 
-@app.api_route("/", methods=["GET", "POST"])
+@app.api_route("/", methods=["GET", "POST", "OPTIONS"])
+@app.api_route("/mcp", methods=["GET", "POST", "OPTIONS"])
 async def mcp_endpoint(request: Request):
     if request.method == "GET":
         return {"status": "MCP Server is running"}
         
     try:
         body = await request.json()
-    except:
+    except Exception:
         body = {}
         
     method = body.get("method")
@@ -77,7 +78,8 @@ async def mcp_endpoint(request: Request):
                 }
             }
 
-    return JSONResponse(
-        status_code=400,
-        content={"jsonrpc": "2.0", "id": msg_id, "error": {"code": -32601, "message": "Method not found"}}
-    )
+    return {
+        "jsonrpc": "2.0",
+        "id": msg_id,
+        "result": {}
+    }
